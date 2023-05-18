@@ -10,29 +10,30 @@ Base = declarative_base()
 favorite_planets = Table(
     "favorite_planets",
     Base.metadata,
-    Column("user_id", ForeignKey("user.id")),
-    Column("planet_id", ForeignKey("planets.id")),
+    Column("user_id", ForeignKey("user.id"),primary_key=True),
+    Column("planet_id", ForeignKey("planets.id"),primary_key=True),
 )
 favorite_characters = Table(
     "favorite_characters",
     Base.metadata,
-    Column("user_id", ForeignKey("user.id")),
-    Column("character_id", ForeignKey("characters.id")),
+    Column("user_id", ForeignKey("user.id"),primary_key=True),
+    Column("character_id", ForeignKey("characters.id"),primary_key=True),
 )
 class User(Base):
     __tablename__ = 'user'
     # Here we define columns for the table person
     # Notice that each column is also a normal Python instance attribute.
     id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
-    favorite_planets = relationship(secondary=favorite_planets)
+    name = Column(String(30), nullable=False)
+    favorite_planets = relationship("Planets",secondary=favorite_planets,lazy="subquery",backref="user")
+    favorite_characters = relationship("Characters",secondary=favorite_characters,lazy="subquery",backref="user")
 
 class Planets(Base):
     __tablename__ = 'planets'
     # Here we define columns for the table address.
     # Notice that each column is also a normal Python instance attribute.
     id = Column(Integer, primary_key=True)
-    name = Column(String(250))
+    name = Column(String(30))
     
     def to_dict(self):
         return {}
@@ -41,7 +42,7 @@ class Characters(Base):
     # Here we define columns for the table address.
     # Notice that each column is also a normal Python instance attribute.
     id = Column(Integer, primary_key=True)
-    name = Column(String(250))
+    name = Column(String(30))
    
 
     def to_dict(self):
